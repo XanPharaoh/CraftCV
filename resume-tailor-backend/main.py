@@ -111,28 +111,69 @@ def _extract_keywords(text: str) -> list[str]:
     words = [w for w in words if w not in stop and len(w) > 2]
     counter = Counter(words)
     return [word for word, _ in counter.most_common(30)]
-def safe_parse_json(text: str) -> dict:
-    """Defensively parse JSON from LLM output that may include markdown fences or extra text."""
-    text = text.strip()
-
+def _clean_json_text(text: str) -> str:
+    """Clean common LLM JSON formatting issues."""
     # Strip markdown code fences
     text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.MULTILINE)
     text = re.sub(r"\s*```\s*$", "", text, flags=re.MULTILINE)
+    # Remove trailing commas before } or ]
+    text = re.sub(r",\s*([}\]])", r"\1", text)
+    # Remove control characters except newlines and tabs
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+    return text.strip()
+
+
+def _extract_json_object(text: str) -> str | None:
+    """Find balanced JSON object in text using brace counting."""
+    start = text.find("{")
+    if start == -1:
+        return None
+    depth = 0
+    in_string = False
+    escape_next = False
+    for i, ch in enumerate(text[start:], start):
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == "\\" and in_string:
+            escape_next = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start:i + 1]
+    return None
+
+
+def safe_parse_json(text: str) -> dict:
+    """Defensively parse JSON from LLM output that may include markdown fences or extra text."""
     text = text.strip()
+    cleaned = _clean_json_text(text)
 
     # Try direct parse first
     try:
-        return json.loads(text)
+        return json.loads(cleaned)
     except json.JSONDecodeError:
         pass
 
-    # Try extracting first JSON object found in the string
-    match = re.search(r"\{.*\}", text, re.DOTALL)
-    if match:
+    # Try extracting balanced JSON object
+    extracted = _extract_json_object(cleaned)
+    if extracted:
         try:
-            return json.loads(match.group())
+            return json.loads(extracted)
         except json.JSONDecodeError:
-            pass
+            # Try cleaning the extracted text too
+            try:
+                return json.loads(_clean_json_text(extracted))
+            except json.JSONDecodeError:
+                pass
 
     # Last resort: return a safe default so the app doesn't crash
     logger.warning(f"Failed to parse LLM JSON. Raw preview: {text[:200]}")
