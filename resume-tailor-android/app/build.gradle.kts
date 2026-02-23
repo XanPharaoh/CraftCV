@@ -25,6 +25,15 @@ android {
         manifestPlaceholders["admobAppId"] = adMobAppId
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("release.jks")
+            storePassword = "craftcv@123"
+            keyAlias = "craftcv"
+            keyPassword = "craftcv@123"
+        }
+    }
+
     buildTypes {
         debug {
             // Local testing — your PC's LAN IP
@@ -39,6 +48,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
