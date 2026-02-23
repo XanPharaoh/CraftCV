@@ -1,0 +1,30 @@
+{
+  "session_id": "7085408e-c973-4fed-8e9b-df18327fd614",
+  "tailored_bullets": [
+    "Developed scalable REST APIs with 99.9% uptime, serving 10,000+ requests per hour using Django and PostgreSQL",
+    "Optimized database queries to achieve 30% reduction in latency using PostgreSQL indexing and caching",
+    "Designed and implemented microservices architecture using FastAPI and Docker, resulting in 25% increase in deployment speed",
+    "Collaborated with cross-functional teams to deploy applications on AWS, achieving 95% reduction in infrastructure costs",
+    "Improved code quality by 40% through rigorous testing and continuous integration using Git and Linux",
+    "Enhanced security by implementing OAuth authentication and authorization, resulting in 90% reduction in security vulnerabilities",
+    "Streamlined development workflow by 50% through automation of testing and deployment scripts using Python and AWS"
+  ],
+  "missing_keywords": [
+    "FastAPI",
+    "Docker",
+    "AWS",
+    "Agile methodology",
+    "CI/CD",
+    "Microservices architecture",
+    "Cloud computing",
+    "OAuth authentication",
+    "Continuous integration",
+    "Scalability"
+  ],
+  "ats_score": 74,
+  "ats_reason": "Resume lacks mention of agile methodology and CI/CD.",
+  "ats_checklist": [],
+  "provider_used": "groq",
+  "uses_remaining": 1,
+  "is_pro": false
+}

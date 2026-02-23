@@ -1,0 +1,39 @@
+# Sensitive files
+.env
+local.properties
+*.jks
+*.keystore
+
+# Android
+resume-tailor-android/app/build/
+resume-tailor-android/.gradle/
+resume-tailor-android/.idea/
+resume-tailor-android/**/*.iml
+resume-tailor-android/local.properties
+*.apk
+*.aab
+
+# Python
+resume-tailor-backend/__pycache__/
+resume-tailor-backend/.venv/
+resume-tailor-backend/venv/
+resume-tailor-backend/*.egg-info/
+resume-tailor-backend/.pytest_cache/
+resume-tailor-backend/dist/
+resume-tailor-backend/build/
+resume-tailor-backend/*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+node_modules/
+*.log

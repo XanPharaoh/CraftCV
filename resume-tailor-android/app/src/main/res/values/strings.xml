@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Resume Tailor</string>
+    <string name="home_title">Tailor Your Resume</string>
+    <string name="home_subtitle">Paste your resume and a job description to get AI-powered tailored bullets</string>
+    <string name="resume_label">Resume Text</string>
+    <string name="resume_placeholder">Paste your resume text here or upload a file…</string>
+    <string name="job_desc_label">Job Description</string>
+    <string name="job_desc_placeholder">Paste the job posting here…</string>
+    <string name="upload_file">Upload PDF / DOCX</string>
+    <string name="tailor_button">Tailor My Resume</string>
+    <string name="results_title">Your Tailored Resume</string>
+    <string name="ats_score">ATS Score</string>
+    <string name="tailored_bullets">Tailored Bullets</string>
+    <string name="missing_keywords">Missing Keywords</string>
+    <string name="copied">Copied to clipboard</string>
+    <string name="copy_all">Copy All</string>
+    <string name="generate_docx">Generate DOCX</string>
+    <string name="cover_letter">Cover Letter</string>
+    <string name="pro_feature">Pro Feature</string>
+    <string name="upgrade_title">Upgrade to Pro</string>
+    <string name="upgrade_subtitle">Unlock unlimited tailoring, DOCX export, cover letters, and more</string>
+    <string name="upgrade_button">Upgrade Now</string>
+    <string name="free_plan">Free</string>
+    <string name="pro_plan">Pro</string>
+    <string name="uses_remaining">%d uses remaining this month</string>
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Tailoring your resume…</string>
+</resources>
