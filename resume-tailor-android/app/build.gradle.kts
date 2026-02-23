@@ -31,8 +31,8 @@ android {
             buildConfigField("String", "BASE_URL", "\"http://192.168.18.164:8001\"")
         }
         release {
-            // Production — replace with your deployed server URL before publishing
-            buildConfigField("String", "BASE_URL", "\"https://api.craftcv.com\"")
+            // Production API — Railway deployment
+            buildConfigField("String", "BASE_URL", "\"https://craftcv-production.up.railway.app\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
