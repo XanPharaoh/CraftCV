@@ -3,25 +3,34 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    
-    <!-- Professional Document Symbol -->
+
+    <!-- Rounded card/document background -->
     <path
         android:fillColor="#2F6BFF"
-        android:pathData="M34,24 L64,24 L74,34 L74,84 L34,84 Z" />
-    
-    <!-- Folded Corner -->
+        android:pathData="M28,30 C28,26.69 30.69,24 34,24 L74,24 C77.31,24 80,26.69 80,30 L80,78 C80,81.31 77.31,84 74,84 L34,84 C30.69,84 28,81.31 28,78 Z" />
+
+    <!-- Inner shadow/depth stripe -->
     <path
         android:fillColor="#1A4FD6"
-        android:pathData="M64,24 L74,34 L64,34 Z" />
-    
-    <!-- Lines -->
+        android:pathData="M28,72 L80,72 L80,78 C80,81.31 77.31,84 74,84 L34,84 C30.69,84 28,81.31 28,78 Z" />
+
+    <!-- "C" letter -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M42,44 L66,44 L66,46 L42,46 Z M42,52 L66,52 L66,54 L42,54 Z M42,60 L58,60 L58,62 L42,62 Z" />
-    
-    <!-- Sparkle/Check detail in electric blue -->
+        android:pathData="M47,42 C51,38 57,38 57,38 L57,42 C57,42 52.5,42 50,44.5 C47.5,47 47.5,51 47.5,54 C47.5,57 47.5,61 50,63.5 C52.5,66 57,66 57,66 L57,70 C57,70 51,70 47,66 C43,62 43,57 43,54 C43,51 43,46 47,42 Z" />
+
+    <!-- "V" letter -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M70,70 L72,74 L76,70 L72,66 Z" />
-        
+        android:pathData="M57,38 L62,38 L66,58 L70,38 L75,38 L68.5,70 L63.5,70 Z" />
+
+    <!-- Small AI sparkle accent -->
+    <path
+        android:fillColor="#7EB5FF"
+        android:pathData="M73,26 L74.5,30 L76,26 L74.5,22 Z" />
+    <path
+        android:fillColor="#7EB5FF"
+        android:pathData="M71,28 L75,28 L75,24 L71,24 Z"
+        android:fillType="evenOdd" />
+
 </vector>

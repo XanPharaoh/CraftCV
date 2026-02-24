@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Resume Tailor</string>
+    <string name="app_name">CraftCV</string>
     <string name="home_title">Tailor Your Resume</string>
     <string name="home_subtitle">Paste your resume and a job description to get AI-powered tailored bullets</string>
     <string name="resume_label">Resume Text</string>

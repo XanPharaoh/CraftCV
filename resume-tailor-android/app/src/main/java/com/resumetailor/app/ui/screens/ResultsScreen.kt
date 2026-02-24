@@ -324,7 +324,7 @@ fun ResultsScreen(
                             )
                         } else {
                             CraftOutlineButton(
-                                text = if (isAdLoading) "Loading ad…" else if (isAdReady) "🎬 Watch Ad to Re-Analyze" else "Ad unavailable",
+                                text = if (isAdLoading) "Loading ad…" else if (isAdReady) "🎬 Watch Ad to Re-Analyze" else "🔄 Tap to Load Ad",
                                 onClick = {
                                     if (isAdReady && !isAdLoading) {
                                         activity?.let { act ->
@@ -335,6 +335,8 @@ fun ResultsScreen(
                                                 },
                                             )
                                         }
+                                    } else if (!isAdLoading) {
+                                        AdManager.retryLoad()
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth(),
@@ -342,7 +344,9 @@ fun ResultsScreen(
                         }
                         Text(
                             if (isPro) "Score updates instantly as you edit. Re-Analyze sends your changes to the AI for a full deep-dive rescore."
-                            else "Watch a short ad to use AI Re-Analysis for free.",
+                            else if (isAdReady) "Watch a short ad to use AI Re-Analysis for free."
+                            else if (isAdLoading) "Loading ad, please wait…"
+                            else "Tap the button to retry loading an ad.",
                             fontFamily = InterFamily, fontSize = 12.sp, color = CraftColors.InkTertiary, textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                         )

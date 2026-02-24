@@ -20,8 +20,8 @@ fun BannerAd(modifier: Modifier = Modifier) {
         factory = { context ->
             AdView(context).apply {
                 setAdSize(AdSize.BANNER)
-                // Real CraftCV banner ad unit ID from AdMob
-                adUnitId = "ca-app-pub-7561854957294548/3279983303"
+                // Ad unit ID from BuildConfig — test IDs for closed testing, real IDs for production
+                adUnitId = com.resumetailor.app.BuildConfig.BANNER_AD_UNIT_ID
                 layoutParams = FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT,
