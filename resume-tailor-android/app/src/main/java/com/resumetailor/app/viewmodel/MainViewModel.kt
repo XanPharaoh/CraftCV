@@ -96,8 +96,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _userStatus = MutableStateFlow<UserStatus?>(null)
     val userStatus: StateFlow<UserStatus?> = _userStatus.asStateFlow()
 
+    // Pro debug flag — MUST be false for release builds
+    private val DEBUG_PRO = false
+
     // Pro status — driven by Google Play Billing (authoritative) + DataStore cache
-    private val _isPro = MutableStateFlow(false)
+    private val _isPro = MutableStateFlow(DEBUG_PRO)
     val isPro: StateFlow<Boolean> = _isPro.asStateFlow()
 
     private val _usesRemaining = MutableStateFlow(5)
@@ -124,7 +127,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             deviceId = prefs.ensureDeviceId()
             // Restore cached Pro status immediately while Billing initialises
-            if (prefs.isPro.first()) _isPro.value = true
+            if (DEBUG_PRO || prefs.isPro.first()) _isPro.value = true
             fetchStatus()
             restoreSavedInputs()
         }
