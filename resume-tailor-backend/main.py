@@ -259,7 +259,7 @@ def privacy_policy():
   <h2>9. Changes to This Policy</h2>
   <p>We may update this policy from time to time. Changes will be posted on this page with an updated effective date.</p>
   <h2>10. Contact Us</h2>
-  <p>Email: <a href="mailto:support@craftcv.app">support@craftcv.app</a></p>
+  <p>Email: <a href="mailto:prismtechteam@gmail.com">prismtechteam@gmail.com</a></p>
   <footer><p>&copy; 2026 CraftCV. All rights reserved.</p></footer>
 </body>
 </html>"""
