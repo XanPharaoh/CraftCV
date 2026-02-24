@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, Header, UploadFile, Depends, HTTPException, Request
-from fastapi.responses import Response
+from fastapi.responses import Response, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -201,6 +201,68 @@ def safe_parse_json(text: str) -> dict:
 @app.get("/")
 def root():
     return {"status": "Resume Tailor API is live 🚀"}
+
+
+@app.get("/privacy", response_class=HTMLResponse)
+def privacy_policy():
+    return """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CraftCV - Privacy Policy</title>
+  <style>
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:800px;margin:0 auto;padding:40px 20px;color:#333;line-height:1.7}
+    h1{color:#1E40AF}h2{color:#1E3A8A;margin-top:32px}a{color:#1E40AF}
+    footer{margin-top:60px;font-size:.85em;color:#888}
+  </style>
+</head>
+<body>
+  <h1>CraftCV &ndash; Privacy Policy</h1>
+  <p><strong>Effective Date:</strong> February 24, 2026</p>
+  <p>CraftCV ("we", "our", or "us") is committed to protecting your privacy. This policy explains what data we collect, how we use it, and your rights.</p>
+  <h2>1. Information We Collect</h2>
+  <ul>
+    <li><strong>Resume Content:</strong> Text you paste or upload, used solely to tailor your resume. Not stored permanently.</li>
+    <li><strong>Job Description:</strong> Text you enter, used solely for AI tailoring. Not stored permanently.</li>
+    <li><strong>Device ID:</strong> A randomly generated anonymous ID used to manage free-tier usage limits. Not linked to your identity.</li>
+    <li><strong>Usage Data:</strong> Anonymous request counts to enforce fair usage limits.</li>
+  </ul>
+  <h2>2. Information We Do NOT Collect</h2>
+  <ul>
+    <li>Name, email address, or phone number</li>
+    <li>Precise location</li>
+    <li>Contacts, photos, or files beyond what you explicitly upload</li>
+    <li>Browsing history or other apps</li>
+  </ul>
+  <h2>3. How We Use Your Data</h2>
+  <ul>
+    <li>To process your resume and generate tailored content using AI</li>
+    <li>To enforce free-tier usage limits via your anonymous device ID</li>
+    <li>To improve app performance and reliability</li>
+  </ul>
+  <h2>4. Third-Party Services</h2>
+  <ul>
+    <li><strong>Google Play Billing:</strong> Handles all subscription payments. We never see or store your payment details. <a href="https://policies.google.com/privacy">Google Privacy Policy</a></li>
+    <li><strong>Google AdMob:</strong> Serves ads to free-tier users. AdMob may collect advertising identifiers. <a href="https://policies.google.com/privacy">Google Privacy Policy</a></li>
+    <li><strong>AI Providers (Groq, Mistral, Gemini):</strong> Resume and job description text is sent for AI processing and not retained beyond the request.</li>
+    <li><strong>Railway:</strong> Our backend API host. Request logs may be retained up to 7 days for debugging.</li>
+  </ul>
+  <h2>5. Data Retention</h2>
+  <p>Resume and job description data is processed in memory and not permanently stored. Anonymous device IDs and usage counts are stored to maintain usage limits but contain no personally identifiable information.</p>
+  <h2>6. Children's Privacy</h2>
+  <p>CraftCV is not directed at children under 13. We do not knowingly collect data from children under 13.</p>
+  <h2>7. Your Rights</h2>
+  <p>You may request deletion of your anonymous device data by contacting us.</p>
+  <h2>8. Security</h2>
+  <p>All data is transmitted over HTTPS. We follow industry best practices to protect your data.</p>
+  <h2>9. Changes to This Policy</h2>
+  <p>We may update this policy from time to time. Changes will be posted on this page with an updated effective date.</p>
+  <h2>10. Contact Us</h2>
+  <p>Email: <a href="mailto:support@craftcv.app">support@craftcv.app</a></p>
+  <footer><p>&copy; 2026 CraftCV. All rights reserved.</p></footer>
+</body>
+</html>"""
 
 
 @app.get("/status/{device_id}")
