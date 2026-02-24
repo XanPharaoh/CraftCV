@@ -12,7 +12,7 @@ android {
         applicationId = "com.resumetailor.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "1.0.0"
 
         // Upgrade secret — set via environment variable, never commit real values
@@ -36,8 +36,8 @@ android {
 
     buildTypes {
         debug {
-            // Local testing — your PC's LAN IP
-            buildConfigField("String", "BASE_URL", "\"http://192.168.18.164:8001\"")
+            // Development — use Railway production API
+            buildConfigField("String", "BASE_URL", "\"https://craftcv-production.up.railway.app\"")
         }
         release {
             // Production API — Railway deployment
