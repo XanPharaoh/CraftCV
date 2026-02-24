@@ -12,8 +12,8 @@ android {
         applicationId = "com.resumetailor.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.0.1"
+        versionCode = 4
+        versionName = "1.0.2"
 
         // Upgrade secret — set via environment variable, never commit real values
         buildConfigField("String", "UPGRADE_SECRET", "\"${System.getenv("UPGRADE_SECRET") ?: ""}\"")
@@ -45,11 +45,9 @@ android {
         release {
             // Production API — Railway deployment
             buildConfigField("String", "BASE_URL", "\"https://craftcv-production.up.railway.app\"")
-            // Test ad IDs for closed testing — switch to real IDs for production launch:
-            // Banner: ca-app-pub-7561854957294548/3279983303
-            // Rewarded: ca-app-pub-7561854957294548/6996555395
-            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/9214589741\"")
-            buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-3940256099942544/5224354917\"")
+            // Real AdMob ad unit IDs
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-7561854957294548/3279983303\"")
+            buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-7561854957294548/6996555395\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
