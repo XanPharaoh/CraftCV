@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ResumeTailor"
+        android:theme="@style/Theme.CraftCV"
         android:usesCleartextTraffic="true">
 
         <!-- AdMob App ID — set real value in local.properties as ADMOB_APP_ID -->
@@ -20,7 +20,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ResumeTailor">
+            android:theme="@style/Theme.CraftCV">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

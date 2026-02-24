@@ -23,7 +23,7 @@ services:
       - key: GOOGLE_PLAY_SERVICE_ACCOUNT_JSON
         sync: false
       - key: GOOGLE_PLAY_PACKAGE_NAME
-        value: com.resumetailor.app
+        value: com.craftcv.app
       - key: CORS_ORIGINS
         value: "*"
       - key: PYTHON_VERSION

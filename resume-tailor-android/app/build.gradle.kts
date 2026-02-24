@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.resumetailor.app"
+    namespace = "com.craftcv.app"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.resumetailor.app"
+        applicationId = "com.craftcv.app"
         minSdk = 26
         targetSdk = 35
         versionCode = 4

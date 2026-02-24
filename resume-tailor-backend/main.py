@@ -594,7 +594,7 @@ def verify_purchase(
         raise HTTPException(status_code=400, detail="Unknown product_id.")
 
     service_account_b64 = os.getenv("GOOGLE_PLAY_SERVICE_ACCOUNT_JSON", "")
-    package_name        = os.getenv("GOOGLE_PLAY_PACKAGE_NAME", "com.resumetailor.app")
+    package_name        = os.getenv("GOOGLE_PLAY_PACKAGE_NAME", "com.craftcv.app")
 
     if service_account_b64:
         # Full server-side validation via Google Play Developer API

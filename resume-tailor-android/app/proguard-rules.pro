@@ -9,8 +9,8 @@
 }
 
 # Gson
--keep class com.resumetailor.app.data.models.** { *; }
--keepclassmembers class com.resumetailor.app.data.models.** { *; }
+-keep class com.craftcv.app.data.models.** { *; }
+-keepclassmembers class com.craftcv.app.data.models.** { *; }
 
 # OkHttp
 -dontwarn okhttp3.**
