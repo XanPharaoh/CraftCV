@@ -21,7 +21,7 @@ android {
         // AdMob — replace with your real App ID before publishing
         // Test ID shown below; real one goes in local.properties or CI env
         val adMobAppId = project.findProperty("ADMOB_APP_ID") as? String
-            ?: "ca-app-pub-3940256099942544~3347511713" // Google test App ID
+            ?: "ca-app-pub-7561854957294548~5895528036" // CraftCV App ID
         manifestPlaceholders["admobAppId"] = adMobAppId
     }
 
@@ -46,8 +46,8 @@ android {
             // Production API — Railway deployment
             buildConfigField("String", "BASE_URL", "\"https://craftcv-production.up.railway.app\"")
             // Real AdMob ad unit IDs
-            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-7561854957294548/3279983303\"")
-            buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-7561854957294548/6996555395\"")
+            buildConfigField("String", "BANNER_AD_UNIT_ID", "\"ca-app-pub-7561854957294548/1780432906\"")
+            buildConfigField("String", "REWARDED_AD_UNIT_ID", "\"ca-app-pub-7561854957294548/5149336856\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
