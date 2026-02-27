@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.craftcv.app.data.models.TailorResponse
+import com.craftcv.app.ui.components.AdGateCard
 import com.craftcv.app.ui.components.ProGateCard
 import com.craftcv.app.ui.components.CraftAccentButton
 import com.craftcv.app.ui.components.CraftOutlineButton
@@ -31,6 +32,9 @@ fun InsightsTab(
     isAdReady: Boolean = false,
     isAdLoading: Boolean = false,
     onWatchAdToReanalyze: () -> Unit = {},
+    insightsUnlocked: Boolean = false,
+    onWatchAdToUnlockInsights: () -> Unit = {},
+    onRetryAd: () -> Unit = {},
 ) {
     val matchScore = tailorData.atsScore
     val roleStrength = when {
@@ -81,8 +85,8 @@ fun InsightsTab(
             }
         }
 
-        // ── What this role typically requires (Pro only) ──
-        if (isPro) {
+        // ── What this role typically requires (Pro or ad-unlocked) ──
+        if (isPro || insightsUnlocked) {
             Surface(shape = RoundedCornerShape(10.dp), color = CraftColors.Surface, border = BorderStroke(1.dp, CraftColors.Border)) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text("What this role typically needs", fontFamily = InterFamily, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = CraftColors.InkPrimary)
@@ -157,8 +161,15 @@ fun InsightsTab(
                 )
             }
         } else {
-            // ── Free user: show blurred teaser + gate ──
-            ProGateCard(message = "Upgrade to Pro to unlock detailed role requirements, related roles, and AI Re-analysis", onUpgrade = onUpgrade)
+            // ── Free user: watch ad to unlock insights ──
+            AdGateCard(
+                message = "Watch a short ad to see role requirements, related roles, and AI Re-analysis",
+                isAdReady = isAdReady,
+                isAdLoading = isAdLoading,
+                onWatchAd = onWatchAdToUnlockInsights,
+                onUpgrade = onUpgrade,
+                onRetryAd = onRetryAd,
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -194,8 +205,11 @@ fun InsightsTab(
                 }
             } else {
                 CraftOutlineButton(
-                    text = if (isAdLoading) "Loading ad…" else if (isAdReady) "🎬 Watch Ad to Re-Analyze" else "Ad unavailable — try again later",
-                    onClick = { if (isAdReady && !isAdLoading) onWatchAdToReanalyze() },
+                    text = if (isAdLoading) "Loading ad…" else if (isAdReady) "🎬 Watch Ad to Re-Analyze" else "🔄 Tap to Load Ad",
+                    onClick = {
+                        if (isAdReady && !isAdLoading) onWatchAdToReanalyze()
+                        else if (!isAdLoading) onRetryAd()
+                    },
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Text(

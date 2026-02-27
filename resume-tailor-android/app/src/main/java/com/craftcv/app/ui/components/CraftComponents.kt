@@ -282,3 +282,66 @@ fun ProGateCard(message: String, onUpgrade: () -> Unit) {
         }
     }
 }
+
+// ── Ad Gate Card — watch an ad to unlock a feature ──────────────────────────
+@Composable
+fun AdGateCard(
+    message: String,
+    isAdReady: Boolean,
+    isAdLoading: Boolean,
+    onWatchAd: () -> Unit,
+    onUpgrade: () -> Unit,
+    onRetryAd: () -> Unit = {},
+) {
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = CraftColors.AccentSoft,
+        border = BorderStroke(1.dp, CraftColors.Accent.copy(alpha = 0.3f)),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text("🎬", fontSize = 18.sp)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Watch ad to unlock", fontFamily = InterFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp, color = CraftColors.InkPrimary)
+                    Text(message, fontFamily = InterFamily, fontSize = 12.sp, color = CraftColors.InkSecondary)
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = CraftColors.Accent,
+                    modifier = Modifier.clickable(enabled = !isAdLoading) {
+                        if (isAdReady) onWatchAd() else onRetryAd()
+                    },
+                ) {
+                    Text(
+                        when {
+                            isAdLoading -> "Loading ad…"
+                            isAdReady -> "▶ Watch Ad"
+                            else -> "🔄 Load Ad"
+                        },
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+                        fontFamily = InterFamily, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = Color.White,
+                    )
+                }
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = CraftColors.ProGoldSoft,
+                    modifier = Modifier.clickable(onClick = onUpgrade),
+                ) {
+                    Text(
+                        "★ Go Pro",
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp),
+                        fontFamily = InterFamily, fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = CraftColors.ProGold,
+                    )
+                }
+            }
+        }
+    }
+}

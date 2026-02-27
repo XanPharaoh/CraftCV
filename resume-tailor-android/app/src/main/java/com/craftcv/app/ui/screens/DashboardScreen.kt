@@ -318,7 +318,7 @@ fun DashboardScreen(
 
             // Quick cover letter button
             CraftOutlineButton(
-                text = if (isGeneratingLetter) "Writing cover letter…" else "✉ Write Cover Letter",
+                text = if (isGeneratingLetter) "Writing cover letter…" else "Write Cover Letter",
                 onClick = {
                     if (jobDescription.length <= 50) {
                         validationMsg = "Job description is too short. Paste the full listing."

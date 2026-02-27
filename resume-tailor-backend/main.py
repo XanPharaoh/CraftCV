@@ -489,13 +489,6 @@ async def generate_docx(
     experience: str           = Form("[]"),
     db: Session               = Depends(get_db),
 ):
-    user_status_data = get_user_status(db, device_id)
-    if not user_status_data["is_pro"]:
-        raise HTTPException(
-            status_code=403,
-            detail="DOCX download is a Pro feature. Please upgrade.",
-        )
-
     try:
         bullets_list = json.loads(bullets)
         skills_list = json.loads(skills)

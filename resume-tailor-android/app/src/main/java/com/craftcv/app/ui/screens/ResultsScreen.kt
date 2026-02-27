@@ -55,6 +55,11 @@ fun ResultsScreen(
     val isAdLoading       by AdManager.isAdLoading.collectAsState()
     val tabs              = listOf("Preview", "Bullets", "Keywords", "Letter", "Insights")
     var selectedTemplate  by remember { mutableStateOf("professional") }
+
+    // Ad-unlock tracking: once user watches an ad, these flip true for the session
+    var coverLetterUnlocked by remember { mutableStateOf(false) }
+    var docxUnlocked        by remember { mutableStateOf(false) }
+    var insightsUnlocked    by remember { mutableStateOf(false) }
     
     // The active source of truth (draft overrides original API response)
     val activeData = draftResume ?: tailorData
@@ -91,8 +96,8 @@ fun ResultsScreen(
     // Track if cover letter needs refresh
     var coverLetterStale by remember { mutableStateOf(false) }
 
-    LaunchedEffect(selectedTab) {
-        if (selectedTab == 3 && isPro && coverLetterState is CoverLetterUiState.Idle) {
+    LaunchedEffect(selectedTab, coverLetterUnlocked) {
+        if (selectedTab == 3 && (isPro || coverLetterUnlocked) && coverLetterState is CoverLetterUiState.Idle) {
             viewModel.generateCoverLetter(resumeText, jobDescription)
         }
     }
@@ -353,7 +358,7 @@ fun ResultsScreen(
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
-                    if (isPro) {
+                    if (isPro || docxUnlocked) {
                         CraftAccentButton(
                             text = "⬇ Download Resume ($selectedBulletCount bullets)",
                             onClick = { viewModel.downloadDocx(tailorData.copy(tailoredBullets = selectedBulletTexts), selectedTemplate) },
@@ -361,7 +366,18 @@ fun ResultsScreen(
                             icon = "",
                         )
                     } else {
-                        ProGateCard(message = "Download your tailored resume as a polished DOCX file", onUpgrade = onUpgradeClick)
+                        AdGateCard(
+                            message = "Watch a short ad to download your tailored resume as DOCX",
+                            isAdReady = isAdReady,
+                            isAdLoading = isAdLoading,
+                            onWatchAd = {
+                                activity?.let { act ->
+                                    AdManager.showRewardedAd(act, onRewarded = { docxUnlocked = true })
+                                }
+                            },
+                            onUpgrade = onUpgradeClick,
+                            onRetryAd = { AdManager.retryLoad() },
+                        )
                     }
 
                     // Copy all
@@ -609,11 +625,24 @@ fun ResultsScreen(
 
                 // ── COVER LETTER ──
                 3 -> {
-                    if (!isPro) {
+                    if (!isPro && !coverLetterUnlocked) {
                         Text("Cover letter", fontFamily = InterFamily, fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = CraftColors.InkPrimary)
                         Text("Generate a tailored cover letter that matches the job description and highlights your strengths.", fontFamily = InterFamily, fontSize = 13.sp, color = CraftColors.InkSecondary, lineHeight = 19.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        ProGateCard(message = "Upgrade to Pro to generate complete, job-specific cover letters with email subject line", onUpgrade = onUpgradeClick)
+                        AdGateCard(
+                            message = "Watch a short ad to generate a complete, job-specific cover letter",
+                            isAdReady = isAdReady,
+                            isAdLoading = isAdLoading,
+                            onWatchAd = {
+                                activity?.let { act ->
+                                    AdManager.showRewardedAd(act, onRewarded = {
+                                        coverLetterUnlocked = true
+                                    })
+                                }
+                            },
+                            onUpgrade = onUpgradeClick,
+                            onRetryAd = { AdManager.retryLoad() },
+                        )
                     } else {
                     // Stale banner — when user changed bullets
                     if (coverLetterStale && coverLetterState is CoverLetterUiState.Success) {
@@ -707,6 +736,13 @@ fun ResultsScreen(
                             )
                         }
                     },
+                    insightsUnlocked = insightsUnlocked,
+                    onWatchAdToUnlockInsights = {
+                        activity?.let { act ->
+                            AdManager.showRewardedAd(act, onRewarded = { insightsUnlocked = true })
+                        }
+                    },
+                    onRetryAd = { AdManager.retryLoad() },
                 )
             }
 

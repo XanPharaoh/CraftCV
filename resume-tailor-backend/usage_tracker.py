@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from models import User
 
-FREE_MONTHLY_LIMIT = 5
+FREE_MONTHLY_LIMIT = 2
 
 
 def get_or_create_user(db: Session, device_id: str) -> User:

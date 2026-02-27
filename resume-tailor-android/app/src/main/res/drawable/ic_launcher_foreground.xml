@@ -4,33 +4,27 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Rounded card/document background -->
+    <!-- Blue rounded document card -->
     <path
         android:fillColor="#2F6BFF"
-        android:pathData="M28,30 C28,26.69 30.69,24 34,24 L74,24 C77.31,24 80,26.69 80,30 L80,78 C80,81.31 77.31,84 74,84 L34,84 C30.69,84 28,81.31 28,78 Z" />
+        android:pathData="M30,22 C30,18.69 32.69,16 36,16 L72,16 C75.31,16 78,18.69 78,22 L78,86 C78,89.31 75.31,92 72,92 L36,92 C32.69,92 30,89.31 30,86 Z" />
 
-    <!-- Inner shadow/depth stripe -->
+    <!-- Decorative document lines -->
     <path
-        android:fillColor="#1A4FD6"
-        android:pathData="M28,72 L80,72 L80,78 C80,81.31 77.31,84 74,84 L34,84 C30.69,84 28,81.31 28,78 Z" />
+        android:fillColor="#5A8FFF"
+        android:pathData="M38,28 L70,28 L70,30 L38,30 Z" />
+    <path
+        android:fillColor="#5A8FFF"
+        android:pathData="M38,33 L60,33 L60,35 L38,35 Z" />
 
-    <!-- "C" letter -->
+    <!-- Bold "C" letter -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M47,42 C51,38 57,38 57,38 L57,42 C57,42 52.5,42 50,44.5 C47.5,47 47.5,51 47.5,54 C47.5,57 47.5,61 50,63.5 C52.5,66 57,66 57,66 L57,70 C57,70 51,70 47,66 C43,62 43,57 43,54 C43,51 43,46 47,42 Z" />
+        android:pathData="M52,38 L52,44 C48,44 44,47 44,54 C44,61 48,64 52,64 L52,70 C44,70 38,63 38,54 C38,45 44,38 52,38 Z" />
 
-    <!-- "V" letter -->
+    <!-- Bold "V" letter -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M57,38 L62,38 L66,58 L70,38 L75,38 L68.5,70 L63.5,70 Z" />
-
-    <!-- Small AI sparkle accent -->
-    <path
-        android:fillColor="#7EB5FF"
-        android:pathData="M73,26 L74.5,30 L76,26 L74.5,22 Z" />
-    <path
-        android:fillColor="#7EB5FF"
-        android:pathData="M71,28 L75,28 L75,24 L71,24 Z"
-        android:fillType="evenOdd" />
+        android:pathData="M54,38 L59,38 L63,58 L67,38 L72,38 L65.5,70 L60.5,70 Z" />
 
 </vector>
