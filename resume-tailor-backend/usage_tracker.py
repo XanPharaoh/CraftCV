@@ -64,6 +64,18 @@ def upgrade_to_pro(db: Session, device_id: str) -> User:
     return user
 
 
+def grant_ad_use(db: Session, device_id: str) -> dict:
+    """Grant +1 use after user watched rewarded ads."""
+    user = get_or_create_user(db, device_id)
+    if user.is_pro:
+        return {"granted": True, "uses_remaining": 999, "is_pro": True}
+    if user.monthly_uses > 0:
+        user.monthly_uses -= 1
+        db.commit()
+    uses_remaining = max(0, FREE_MONTHLY_LIMIT - user.monthly_uses)
+    return {"granted": True, "uses_remaining": uses_remaining, "is_pro": False}
+
+
 def get_user_status(db: Session, device_id: str) -> dict:
     user = get_or_create_user(db, device_id)
     uses_remaining = 999 if user.is_pro else max(0, FREE_MONTHLY_LIMIT - user.monthly_uses)

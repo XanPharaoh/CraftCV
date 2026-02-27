@@ -25,7 +25,9 @@ from prompt_builder import (
 )
 from docx_generator import generate_resume_docx
 from usage_tracker import (
+    FREE_MONTHLY_LIMIT,
     check_and_increment,
+    grant_ad_use,
     get_user_status,
     upgrade_to_pro,
     get_or_create_user,
@@ -427,6 +429,22 @@ async def tailor_resume(
         "provider_used":        provider,
         "uses_remaining":       usage["uses_remaining"],
         "is_pro":               is_pro,
+    }
+
+
+# ── Grant ad use (after watching rewarded ads) ──
+@app.post("/grant-ad-use")
+@limiter.limit("10/minute")
+async def grant_ad_use_endpoint(
+    request: Request,
+    device_id: str = Form(...),
+    db: Session    = Depends(get_db),
+):
+    result = grant_ad_use(db, device_id)
+    return {
+        "is_pro":        result["is_pro"],
+        "monthly_uses":  FREE_MONTHLY_LIMIT - result["uses_remaining"] if not result["is_pro"] else 0,
+        "uses_remaining": result["uses_remaining"],
     }
 
 

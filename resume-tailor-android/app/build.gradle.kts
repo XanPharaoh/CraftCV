@@ -12,8 +12,8 @@ android {
         applicationId = "com.craftcv.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 7
-        versionName = "1.0.3"
+        versionCode = 8
+        versionName = "1.0.4"
 
         // Upgrade secret — set via environment variable, never commit real values
         buildConfigField("String", "UPGRADE_SECRET", "\"${System.getenv("UPGRADE_SECRET") ?: ""}\"")

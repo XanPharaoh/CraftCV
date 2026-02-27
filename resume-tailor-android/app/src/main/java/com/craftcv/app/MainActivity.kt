@@ -110,6 +110,7 @@ private fun CraftCVApp() {
                 onPaywallRequired = { currentScreen = "paywall" },
                 onEditProfile     = { currentScreen = "profile" },
                 onHistory         = { currentScreen = "history" },
+                activity          = activity,
             )
 
             "history" -> HistoryScreen(

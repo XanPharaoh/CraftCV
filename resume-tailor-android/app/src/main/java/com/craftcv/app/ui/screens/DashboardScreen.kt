@@ -1,5 +1,6 @@
 package com.craftcv.app.ui.screens
 
+import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.craftcv.app.ads.AdManager
 import com.craftcv.app.data.models.UserProfile
 import com.craftcv.app.ui.components.*
 import com.craftcv.app.ui.theme.CraftColors
@@ -41,6 +43,7 @@ fun DashboardScreen(
     onPaywallRequired: () -> Unit,
     onEditProfile: () -> Unit,
     onHistory: () -> Unit = {},
+    activity: Activity? = null,
 ) {
     var jobDescription by remember { mutableStateOf("") }
     var resumeFileName by remember { mutableStateOf("") }
@@ -50,6 +53,15 @@ fun DashboardScreen(
     val context    = LocalContext.current
     val uiState    by viewModel.uiState.collectAsState()
     val quickCoverState by viewModel.quickCoverLetterState.collectAsState()
+
+    // Ad-gate state for usage limit dialog
+    var showAdGateDialog by remember { mutableStateOf(false) }
+    var adWatchCount     by remember { mutableIntStateOf(0) }
+    // "tailor" or "cover" — which action triggered the limit
+    var pendingAction    by remember { mutableStateOf("") }
+
+    val isAdReady   by AdManager.isAdReady.collectAsState()
+    val isAdLoading by AdManager.isAdLoading.collectAsState()
 
     // Restore saved inputs
     LaunchedEffect(Unit) {
@@ -69,7 +81,13 @@ fun DashboardScreen(
         when (val state = uiState) {
             is UiState.Success -> onResultsReady()
             is UiState.Error -> {
-                if (state.isUsageLimit) onPaywallRequired()
+                if (state.isUsageLimit) {
+                    // Show ad-gate dialog instead of going straight to paywall
+                    pendingAction = "tailor"
+                    adWatchCount = 0
+                    showAdGateDialog = true
+                    viewModel.resetState()
+                }
             }
             else -> {}
         }
@@ -139,6 +157,98 @@ fun DashboardScreen(
             dismissButton = {
                 TextButton(onClick = { viewModel.resetQuickCoverLetter() }) {
                     Text("Close", fontFamily = InterFamily, color = CraftColors.InkSecondary)
+                }
+            },
+        )
+    }
+
+    // ── Ad-gate dialog (shown when free uses exhausted) ──────────────────────
+    if (showAdGateDialog) {
+        AlertDialog(
+            onDismissRequest = { showAdGateDialog = false },
+            title = {
+                Text(
+                    "Out of free uses",
+                    fontFamily = InterFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 16.sp,
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        "Watch ${2 - adWatchCount} short video${if (2 - adWatchCount > 1) "s" else ""} to unlock another use, or upgrade to Pro for unlimited access.",
+                        fontFamily = InterFamily,
+                        fontSize = 14.sp,
+                        color = CraftColors.InkSecondary,
+                    )
+
+                    // Watch Ad button
+                    Button(
+                        onClick = {
+                            activity?.let { act ->
+                                AdManager.showRewardedAd(act, onRewarded = {
+                                    adWatchCount++
+                                    if (adWatchCount >= 2) {
+                                        viewModel.grantAdUse()
+                                        showAdGateDialog = false
+                                    }
+                                })
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = isAdReady,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = CraftColors.Accent,
+                            contentColor = Color.White,
+                        ),
+                    ) {
+                        Text(
+                            if (isAdLoading) "Loading ad..."
+                            else if (!isAdReady) "Ad unavailable"
+                            else if (adWatchCount == 0) "Watch Ad 1 of 2"
+                            else "Watch Ad 2 of 2",
+                            fontFamily = InterFamily,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
+
+                    if (!isAdReady && !isAdLoading) {
+                        TextButton(
+                            onClick = { AdManager.retryLoad() },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text("Tap to load ad", fontFamily = InterFamily, fontSize = 13.sp, color = CraftColors.InkTertiary)
+                        }
+                    }
+
+                    // Divider with "or"
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = CraftColors.Border)
+                        Text("  or  ", fontFamily = InterFamily, fontSize = 12.sp, color = CraftColors.InkTertiary)
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = CraftColors.Border)
+                    }
+
+                    // Go Pro button
+                    OutlinedButton(
+                        onClick = { showAdGateDialog = false; onPaywallRequired() },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(10.dp),
+                        border = BorderStroke(1.dp, CraftColors.ProGold),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = CraftColors.ProGold),
+                    ) {
+                        Text("Go Pro — No Ads, Unlimited Uses", fontFamily = InterFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                    }
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(onClick = { showAdGateDialog = false }) {
+                    Text("Cancel", fontFamily = InterFamily, color = CraftColors.InkTertiary)
                 }
             },
         )
@@ -322,6 +432,13 @@ fun DashboardScreen(
                 onClick = {
                     if (jobDescription.length <= 50) {
                         validationMsg = "Job description is too short. Paste the full listing."
+                        return@CraftOutlineButton
+                    }
+                    // Check usage limit for free users
+                    if (!isPro && usesRemaining <= 0) {
+                        pendingAction = "cover"
+                        adWatchCount = 0
+                        showAdGateDialog = true
                         return@CraftOutlineButton
                     }
                     validationMsg = ""

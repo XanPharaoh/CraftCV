@@ -581,6 +581,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun hasSeenProfile(): Boolean = prefs.hasSeenProfile.first()
     fun resetState() { _uiState.value = UiState.Idle }
 
+    fun grantAdUse() {
+        viewModelScope.launch {
+            try {
+                val resp = api.grantAdUse(deviceId)
+                if (resp.isSuccessful && resp.body() != null) {
+                    _usesRemaining.value = resp.body()!!.usesRemaining
+                }
+            } catch (_: Exception) { /* silent */ }
+        }
+    }
+
     fun showSnackbar(message: String) {
         viewModelScope.launch { _snackbarMessage.emit(message) }
     }

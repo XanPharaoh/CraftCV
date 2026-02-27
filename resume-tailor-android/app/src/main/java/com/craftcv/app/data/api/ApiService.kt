@@ -85,6 +85,12 @@ interface ApiService {
     ): Response<ResponseBody>
 
     @FormUrlEncoded
+    @POST("/grant-ad-use")
+    suspend fun grantAdUse(
+        @Field("device_id") deviceId: String,
+    ): Response<UserStatus>
+
+    @FormUrlEncoded
     @POST("/upgrade")
     suspend fun upgradeToPro(
         @Header("X-Upgrade-Secret") secret: String,
