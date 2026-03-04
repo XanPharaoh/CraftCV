@@ -41,8 +41,12 @@ private val CraftDarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun CraftCVTheme(content: @Composable () -> Unit) {
-    val colorScheme = if (isSystemInDarkTheme()) CraftDarkColorScheme else CraftLightColorScheme
+fun CraftCVTheme(themeMode: String = "system", content: @Composable () -> Unit) {
+    val colorScheme = when (themeMode) {
+        "light" -> CraftLightColorScheme
+        "dark"  -> CraftDarkColorScheme
+        else    -> if (isSystemInDarkTheme()) CraftDarkColorScheme else CraftLightColorScheme
+    }
     MaterialTheme(
         colorScheme = colorScheme,
         typography  = CraftTypography,

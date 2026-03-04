@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import com.craftcv.app.ui.theme.CraftColors
 import com.craftcv.app.ui.theme.InterFamily
 
@@ -37,7 +39,7 @@ fun ScoreGauge(
 
     BoxWithConstraints(
         contentAlignment = Alignment.Center,
-        modifier = modifier.size(160.dp)
+        modifier = modifier.size(160.dp).semantics { contentDescription = "ATS compatibility score: $score percent" }
     ) {
         val isCompact = maxWidth < 120.dp
         val strokeDp = if (isCompact) 7.dp else 14.dp

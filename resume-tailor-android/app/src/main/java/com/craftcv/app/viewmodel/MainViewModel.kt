@@ -106,6 +106,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _usesRemaining = MutableStateFlow(5)
     val usesRemaining: StateFlow<Int> = _usesRemaining.asStateFlow()
 
+    // Theme mode: "system", "light", "dark"
+    private val _themeMode = MutableStateFlow("system")
+    val themeMode: StateFlow<String> = _themeMode.asStateFlow()
+
     // Google Play Billing
     val billingManager = BillingManager(
         context          = getApplication(),
@@ -130,6 +134,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (DEBUG_PRO || prefs.isPro.first()) _isPro.value = true
             fetchStatus()
             restoreSavedInputs()
+            // Restore theme preference
+            prefs.themeMode.collect { _themeMode.value = it }
         }
         billingManager.connect()
     }
@@ -186,6 +192,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun skipProfile() {
         viewModelScope.launch { prefs.setHasSeenProfile(true) }
+    }
+
+    // ── Theme ────────────────────────────────────────────────────────────────
+    fun cycleTheme() {
+        viewModelScope.launch {
+            val next = when (_themeMode.value) {
+                "system" -> "light"
+                "light" -> "dark"
+                else -> "system"
+            }
+            prefs.setThemeMode(next)
+            _themeMode.value = next
+        }
+    }
+
+    // ── Onboarding ───────────────────────────────────────────────────────────
+    suspend fun hasSeenOnboarding(): Boolean = prefs.hasSeenOnboarding.first()
+
+    fun completeOnboarding() {
+        viewModelScope.launch { prefs.setHasSeenOnboarding(true) }
+    }
+
+    fun resetOnboarding() {
+        viewModelScope.launch { prefs.setHasSeenOnboarding(false) }
     }
 
     // ── Status ───────────────────────────────────────────────────────────────

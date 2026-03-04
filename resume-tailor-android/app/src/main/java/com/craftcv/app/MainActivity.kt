@@ -31,9 +31,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         AdManager.initialize(this)
         setContent {
-            CraftCVTheme {
-                CraftCVApp()
-            }
+            CraftCVApp()
         }
     }
 }
@@ -44,12 +42,19 @@ private fun CraftCVApp() {
     val snackbarHostState        = remember { SnackbarHostState() }
     val activity                 = LocalContext.current as Activity
 
+    // Theme
+    val themeMode by viewModel.themeMode.collectAsStateWithLifecycle()
+
     // Nav state — "loading" until we check DataStore
     var currentScreen by remember { mutableStateOf("loading") }
 
     // Determine start screen once on launch
     LaunchedEffect(Unit) {
-        currentScreen = if (viewModel.hasSeenProfile()) "dashboard" else "profile"
+        currentScreen = when {
+            !viewModel.hasSeenOnboarding() -> "onboarding"
+            !viewModel.hasSeenProfile()    -> "profile"
+            else                           -> "dashboard"
+        }
     }
 
     // Collected states
@@ -66,7 +71,7 @@ private fun CraftCVApp() {
     }
 
     // System back button support
-    BackHandler(enabled = currentScreen !in listOf("loading", "dashboard", "profile")) {
+    BackHandler(enabled = currentScreen !in listOf("loading", "dashboard", "profile", "onboarding")) {
         currentScreen = when (currentScreen) {
             "results" -> { viewModel.resetState(); viewModel.resetCoverLetter(); "dashboard" }
             "history" -> "dashboard"
@@ -75,6 +80,7 @@ private fun CraftCVApp() {
         }
     }
 
+    CraftCVTheme(themeMode = themeMode) {
     Scaffold(
         modifier     = Modifier.fillMaxSize(),
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -90,6 +96,13 @@ private fun CraftCVApp() {
                 // Blank while DataStore resolves — typically < 100ms
             }
 
+            "onboarding" -> OnboardingScreen(
+                onComplete = {
+                    viewModel.completeOnboarding()
+                    currentScreen = "profile"
+                }
+            )
+
             "profile" -> ProfileScreen(
                 onProfileReady = { profile ->
                     viewModel.saveProfile(profile)
@@ -102,15 +115,18 @@ private fun CraftCVApp() {
             )
 
             "dashboard" -> DashboardScreen(
-                viewModel         = viewModel,
-                profile           = userProfile,
-                isPro             = isPro,
-                usesRemaining     = usesRemaining,
-                onResultsReady    = { currentScreen = "results" },
-                onPaywallRequired = { currentScreen = "paywall" },
-                onEditProfile     = { currentScreen = "profile" },
-                onHistory         = { currentScreen = "history" },
-                activity          = activity,
+                viewModel           = viewModel,
+                profile             = userProfile,
+                isPro               = isPro,
+                usesRemaining       = usesRemaining,
+                onResultsReady      = { currentScreen = "results" },
+                onPaywallRequired   = { currentScreen = "paywall" },
+                onEditProfile       = { currentScreen = "profile" },
+                onHistory           = { currentScreen = "history" },
+                activity            = activity,
+                themeMode           = themeMode,
+                onToggleTheme       = { viewModel.cycleTheme() },
+                onReplayOnboarding  = { viewModel.resetOnboarding(); currentScreen = "onboarding" },
             )
 
             "history" -> HistoryScreen(
@@ -155,5 +171,6 @@ private fun CraftCVApp() {
             }
         }
         }
+    }
     }
 }

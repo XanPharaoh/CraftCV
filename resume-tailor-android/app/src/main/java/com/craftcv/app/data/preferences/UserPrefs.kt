@@ -23,6 +23,8 @@ class UserPrefs(private val context: Context) {
         private val HAS_SEEN_PROFILE  = booleanPreferencesKey("has_seen_profile")
         private val PROFILE_JSON      = stringPreferencesKey("profile_json")
         private val DRAFT_RESUME_JSON = stringPreferencesKey("draft_resume_json")
+        private val THEME_MODE = stringPreferencesKey("theme_mode")
+        private val HAS_SEEN_ONBOARDING = booleanPreferencesKey("has_seen_onboarding")
     }
 
     val deviceId: Flow<String> = context.dataStore.data.map { it[DEVICE_ID] ?: "" }
@@ -35,6 +37,20 @@ class UserPrefs(private val context: Context) {
 
     /** True once the user has completed or skipped the profile screen. */
     val hasSeenProfile: Flow<Boolean> = context.dataStore.data.map { it[HAS_SEEN_PROFILE] ?: false }
+
+    /** Theme mode: "system", "light", or "dark" */
+    val themeMode: Flow<String> = context.dataStore.data.map { it[THEME_MODE] ?: "system" }
+
+    suspend fun setThemeMode(mode: String) {
+        context.dataStore.edit { it[THEME_MODE] = mode }
+    }
+
+    /** True once the user has seen the onboarding walkthrough. */
+    val hasSeenOnboarding: Flow<Boolean> = context.dataStore.data.map { it[HAS_SEEN_ONBOARDING] ?: false }
+
+    suspend fun setHasSeenOnboarding(value: Boolean) {
+        context.dataStore.edit { it[HAS_SEEN_ONBOARDING] = value }
+    }
 
     suspend fun ensureDeviceId(): String {
         var id = ""

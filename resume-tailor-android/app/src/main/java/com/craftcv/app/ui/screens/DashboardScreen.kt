@@ -1,7 +1,17 @@
 package com.craftcv.app.ui.screens
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BrightnessAuto
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.Feedback
+import androidx.compose.material.icons.outlined.HelpOutline
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -44,6 +54,9 @@ fun DashboardScreen(
     onEditProfile: () -> Unit,
     onHistory: () -> Unit = {},
     activity: Activity? = null,
+    themeMode: String = "system",
+    onToggleTheme: () -> Unit = {},
+    onReplayOnboarding: () -> Unit = {},
 ) {
     var jobDescription by remember { mutableStateOf("") }
     var resumeFileName by remember { mutableStateOf("") }
@@ -269,6 +282,26 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 Text("CraftCV", fontFamily = InterFamily, fontWeight = FontWeight.Bold, fontSize = 17.sp, color = CraftColors.InkPrimary)
                 Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = onReplayOnboarding) {
+                    Icon(
+                        Icons.Outlined.HelpOutline,
+                        contentDescription = "Replay tutorial",
+                        tint = CraftColors.InkTertiary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                IconButton(onClick = onToggleTheme) {
+                    Icon(
+                        imageVector = when (themeMode) {
+                            "light" -> Icons.Outlined.LightMode
+                            "dark"  -> Icons.Outlined.DarkMode
+                            else    -> Icons.Outlined.BrightnessAuto
+                        },
+                        contentDescription = "Toggle theme: $themeMode",
+                        tint = CraftColors.InkTertiary,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
                 if (isPro) {
                     TextButton(onClick = onHistory) {
                         Text("History", fontFamily = InterFamily, fontSize = 13.sp, color = CraftColors.InkSecondary)
@@ -475,6 +508,23 @@ fun DashboardScreen(
                 Surface(shape = RoundedCornerShape(8.dp), color = CraftColors.ErrorSoft, border = BorderStroke(1.dp, CraftColors.Error.copy(alpha = 0.3f))) {
                     Text(msg, modifier = Modifier.padding(12.dp), fontSize = 13.sp, color = CraftColors.Error, fontFamily = InterFamily)
                 }
+            }
+
+            // ── Feedback ──
+            TextButton(
+                onClick = {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:support@craftcv.app")
+                        putExtra(Intent.EXTRA_SUBJECT, "CraftCV App Feedback")
+                        putExtra(Intent.EXTRA_TEXT, "App Version: ${com.craftcv.app.BuildConfig.VERSION_NAME}\nDevice: ${Build.MODEL}\nAndroid: ${Build.VERSION.RELEASE}\n\nFeedback:\n")
+                    }
+                    context.startActivity(Intent.createChooser(intent, "Send feedback"))
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            ) {
+                Icon(Icons.Outlined.Feedback, contentDescription = null, modifier = Modifier.size(16.dp), tint = CraftColors.InkTertiary)
+                Spacer(Modifier.width(4.dp))
+                Text("Send Feedback", fontFamily = InterFamily, fontSize = 12.sp, color = CraftColors.InkTertiary)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
