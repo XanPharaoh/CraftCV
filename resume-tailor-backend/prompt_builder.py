@@ -31,35 +31,46 @@ IMPORTANT: Use currency, salary conventions, and professional norms appropriate 
     return f"""
 You are an expert resume writer, career coach, and ATS optimization specialist.
 
-CANDIDATE RESUME:
+CANDIDATE RESUME (FULL TEXT — read every line carefully):
 \"\"\"
-{resume_text[:3000]}
+{resume_text[:5000]}
 \"\"\"
 
 JOB DESCRIPTION:
 \"\"\"
-{job_description[:2000]}
+{job_description[:3000]}
 \"\"\"
 {location_block}
 
 Your job is to tailor this candidate's resume for this specific role. You must produce a professional-grade structured resume AND a cover letter.
 
+CRITICAL — EXPERIENCE CALCULATION:
+Before writing anything, carefully analyze the candidate's work history:
+- Look at ALL job titles, companies, and date ranges in the resume
+- Calculate the TOTAL years of professional experience by adding up all employment periods
+- If dates overlap, count the overlapping period only once
+- If a role says "Present" or "Current", assume it is still active as of today
+- Use this EXACT calculated number in the professional summary — do NOT guess or approximate
+- The same candidate must get the SAME years of experience regardless of which job they apply for
+- Years of experience is a FACT from the resume, NOT something that changes per job description
+
 TASKS:
 1. Write a professional_summary (3-4 impactful sentences):
-   - Lead with years of experience and primary expertise area
+   - Lead with the CALCULATED total years of professional experience (from the analysis above) and primary expertise area
    - Highlight 2-3 key achievements most relevant to this target role
    - End with a forward-looking value proposition for the employer
    - Do NOT use generic filler like "seeking new challenges" or "passionate professional"
 
 2. Analyze ALL distinct roles/positions in the candidate's resume and create
    structured experience entries. For EACH role found, produce:
-   - job_title: the position title
-   - company: the company or organization name
-   - dates: the employment period (e.g. "Jan 2020 – Present")
+   - job_title: the EXACT position title from the resume (do not rename it)
+   - company: the EXACT company or organization name from the resume
+   - dates: the EXACT employment period as written on the resume (e.g. "Jan 2020 – Present")
    - bullets: 2-4 powerful, tailored bullet points for that specific role
 
-   Create at least 2 experience entries (up to 5). If the resume is vague
-   about specific roles, infer reasonable entries from context.
+   Create an entry for EVERY role listed on the resume (at least 2, up to 6).
+   Do NOT skip any roles. Do NOT merge different positions into one entry.
+   Preserve the chronological order from the resume.
 
    Each bullet must:
    - Start with a powerful action verb
@@ -77,8 +88,10 @@ TASKS:
 
 6. Write a compelling {paragraph_count}-paragraph cover letter:
    - Do NOT start with "I am writing to apply" — use a strong hook
+   - Reference the candidate's ACTUAL job titles, companies, and achievements from their resume
    - Reference 2-3 specific details from the job description
-   - Highlight the candidate's most relevant achievements
+   - Use the SAME years of experience number you calculated above
+   - Highlight the candidate's most relevant REAL achievements (do not fabricate)
    - {"Include a paragraph about cultural fit and why this company specifically." if is_pro else ""}
    - End with a confident, clear call to action
    - Sound human, not robotic
@@ -89,10 +102,11 @@ TASKS:
 
 9. Suggest 3-5 alternative roles the candidate would also qualify for.
 
-10. Extract the candidate's contact information from their resume.
+10. Extract the candidate's contact information EXACTLY as it appears on their resume.
     Look for their full name, email address, phone number, current/most recent
     job title, location/city, and LinkedIn URL. Return whatever you can find.
     If a field is not present, return an empty string for it.
+    IMPORTANT: Copy email and phone EXACTLY — do not modify, redact, or anonymize them.
 
 11. Extract ALL of the candidate's education history into an array of objects.
     Each object should have: `institution`, `degree`, `graduation_date`.
@@ -168,11 +182,16 @@ def build_cover_letter_prompt(
     tone: str,
     is_pro: bool,
     location: str = "",
+    candidate_name: str = "",
+    professional_summary: str = "",
+    experience_json: str = "",
 ) -> str:
     resume_text = _sanitize_input(resume_text)
     job_description = _sanitize_input(job_description)
     tone = _sanitize_input(tone)
     location = _sanitize_input(location)
+    candidate_name = _sanitize_input(candidate_name)
+    professional_summary = _sanitize_input(professional_summary)
     paragraph_count = "5" if is_pro else "3"
     tone_guide = {
         "professional": "formal, confident, and polished",
@@ -186,30 +205,43 @@ def build_cover_letter_prompt(
 IMPORTANT: Use locally appropriate language, currency, and professional conventions for this location.
 """
 
+    # Include structured context from the tailor step if available
+    context_block = ""
+    if candidate_name.strip():
+        context_block += f"\nCANDIDATE NAME: {candidate_name}\n"
+    if professional_summary.strip():
+        context_block += f"\nPROFESSIONAL SUMMARY (from resume analysis):\n{professional_summary[:500]}\n"
+    if experience_json.strip():
+        context_block += f"\nSTRUCTURED EXPERIENCE (from resume analysis):\n{experience_json[:1500]}\n"
+
     return f"""
 You are an expert cover letter writer. Write a compelling cover letter.
 
-CANDIDATE RESUME SUMMARY:
+CANDIDATE RESUME (FULL TEXT):
 \"\"\"
-{resume_text[:2000]}
+{resume_text[:4000]}
 \"\"\"
+{context_block}
 
 JOB DESCRIPTION:
 \"\"\"
-{job_description[:1500]}
+{job_description[:3000]}
 \"\"\"
 {location_block}
 
 TONE: {tone_guide}
 LENGTH: Exactly {paragraph_count} paragraphs.
 
-RULES:
+CRITICAL RULES:
 - Do NOT start with "I am writing to apply" — use a strong hook instead
+- Reference the candidate's ACTUAL job titles, companies, and years from their resume
+- Calculate total years of experience from all roles listed and state it accurately
 - Reference 2–3 specific details from the job description
-- Highlight the candidate's most relevant achievements
+- Highlight the candidate's most relevant REAL achievements (do not fabricate)
 - {"Include a paragraph about cultural fit and why this company specifically." if is_pro else ""}
 - End with a confident, clear call to action
 - Sound human, not robotic
+- The cover letter must be CONSISTENT with the resume — same experience, same achievements
 
 Respond ONLY with valid JSON:
 {{

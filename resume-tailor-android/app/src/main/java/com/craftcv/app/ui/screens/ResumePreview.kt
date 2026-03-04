@@ -43,6 +43,9 @@ fun ResumePreviewCard(
     val name = contactInfo.fullName.ifBlank { profile?.fullName?.ifBlank { "Your Name" } ?: "Your Name" }
     val title = contactInfo.currentTitle.ifBlank { profile?.currentTitle?.ifBlank { profile.targetRole } ?: "" }
     val location = contactInfo.location.ifBlank { profile?.location ?: "" }
+    val emailAddr = contactInfo.email
+    val phoneNum = contactInfo.phone
+    val linkedin = contactInfo.linkedinUrl
     val education = if (educationEntries.isNotEmpty()) {
         educationEntries.joinToString("\n") { entry ->
             buildString {
@@ -67,9 +70,9 @@ fun ResumePreviewCard(
         border = BorderStroke(0.5.dp, Color(0xFFDDDDDD)),
     ) {
         when (template) {
-            "modern" -> ModernPreview(name, title, location, education, skills, targetRole, selectedBullets, selectedKeywords, experience, professionalSummary, onEditSection)
-            "minimal" -> MinimalPreview(name, title, location, education, skills, targetRole, selectedBullets, selectedKeywords, experience, professionalSummary, onEditSection)
-            else -> ProfessionalPreview(name, title, location, education, skills, targetRole, selectedBullets, selectedKeywords, experience, professionalSummary, onEditSection)
+            "modern" -> ModernPreview(name, title, location, education, skills, targetRole, selectedBullets, selectedKeywords, experience, professionalSummary, onEditSection, emailAddr, phoneNum, linkedin)
+            "minimal" -> MinimalPreview(name, title, location, education, skills, targetRole, selectedBullets, selectedKeywords, experience, professionalSummary, onEditSection, emailAddr, phoneNum, linkedin)
+            else -> ProfessionalPreview(name, title, location, education, skills, targetRole, selectedBullets, selectedKeywords, experience, professionalSummary, onEditSection, emailAddr, phoneNum, linkedin)
         }
     }
 }
@@ -84,6 +87,7 @@ private fun ProfessionalPreview(
     experience: List<ExperienceEntry> = emptyList(),
     professionalSummary: String = "",
     onEditSection: (String) -> Unit,
+    email: String = "", phone: String = "", linkedin: String = "",
 ) {
     val headerColor = Color(0xFF2C3E50)
     val ink = Color(0xFF333333)
@@ -102,7 +106,7 @@ private fun ProfessionalPreview(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-        // Contact line
+        // Contact line (title · location)
         val contactParts = listOfNotNull(
             title.ifBlank { null },
             location.ifBlank { null },
@@ -112,6 +116,23 @@ private fun ProfessionalPreview(
             Text(
                 contactParts.joinToString("  ·  "),
                 fontSize = 10.sp,
+                color = gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+
+        // Contact details (email · phone · linkedin)
+        val detailParts = listOfNotNull(
+            email.ifBlank { null },
+            phone.ifBlank { null },
+            linkedin.ifBlank { null },
+        )
+        if (detailParts.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                detailParts.joinToString("  ·  "),
+                fontSize = 9.sp,
                 color = gray,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
@@ -211,6 +232,7 @@ private fun ModernPreview(
     experience: List<ExperienceEntry> = emptyList(),
     professionalSummary: String = "",
     onEditSection: (String) -> Unit,
+    email: String = "", phone: String = "", linkedin: String = "",
 ) {
     val accent = Color(0xFF1A6BDB)
     val ink = Color(0xFF333333)
@@ -231,6 +253,11 @@ private fun ModernPreview(
                 if (parts.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(parts.joinToString("  |  "), fontSize = 10.sp, color = Color.White.copy(alpha = 0.85f))
+                }
+                val detailParts = listOfNotNull(email.ifBlank { null }, phone.ifBlank { null }, linkedin.ifBlank { null })
+                if (detailParts.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(detailParts.joinToString("  |  "), fontSize = 9.sp, color = Color.White.copy(alpha = 0.75f))
                 }
             }
         }
@@ -317,6 +344,7 @@ private fun MinimalPreview(
     experience: List<ExperienceEntry> = emptyList(),
     professionalSummary: String = "",
     onEditSection: (String) -> Unit,
+    email: String = "", phone: String = "", linkedin: String = "",
 ) {
     val black = Color(0xFF1A1A1A)
     val darkGray = Color(0xFF444444)
@@ -331,6 +359,12 @@ private fun MinimalPreview(
             if (parts.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(parts.joinToString("  |  "), fontSize = 9.sp, color = midGray)
+            }
+
+            val detailParts = listOfNotNull(email.ifBlank { null }, phone.ifBlank { null }, linkedin.ifBlank { null })
+            if (detailParts.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(detailParts.joinToString("  |  "), fontSize = 8.sp, color = midGray)
             }
 
             // Thin divider

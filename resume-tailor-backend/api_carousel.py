@@ -137,7 +137,7 @@ def _call_groq(prompt: str) -> str:
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
-        max_tokens=2048,
+        max_tokens=3000,
     )
     return resp.choices[0].message.content
 
@@ -156,7 +156,7 @@ def _call_openrouter(prompt: str) -> str:
     resp = client.chat.completions.create(
         model="meta-llama/llama-3.1-8b-instruct:free",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=2048,
+        max_tokens=3000,
     )
     return resp.choices[0].message.content
 
@@ -189,6 +189,6 @@ def _call_longcat(prompt: str) -> str:
     resp = client.chat.completions.create(
         model="LongCat-Flash-Chat",
         messages=[{"role": "user", "content": prompt}],
-        max_tokens=2048,
+        max_tokens=3000,
     )
     return resp.choices[0].message.content

@@ -463,19 +463,34 @@ async def generate_cover_letter(
     user_status_data = get_user_status(db, device_id)
     is_pro = user_status_data["is_pro"]
 
-    prompt = build_cover_letter_prompt(resume_text, job_description, tone, is_pro, location)
-    raw_response, provider = call_llm(prompt)
-    logger.info(f"Cover letter for device={device_id} served by {provider}")
-
-    data = safe_parse_json(raw_response)
-
-    # Save cover letter to latest session
+    # Retrieve structured context from latest tailor session for consistency
+    candidate_name = ""
+    professional_summary = ""
+    experience_json = ""
     session = (
         db.query(TailorSession)
         .filter(TailorSession.user_id == device_id)
         .order_by(TailorSession.created_at.desc())
         .first()
     )
+    if session:
+        contact = json.loads(session.contact_info_out or "{}")
+        candidate_name = contact.get("full_name", "")
+        professional_summary = session.summary_out or ""
+        experience_json = session.experience_out or ""
+
+    prompt = build_cover_letter_prompt(
+        resume_text, job_description, tone, is_pro, location,
+        candidate_name=candidate_name,
+        professional_summary=professional_summary,
+        experience_json=experience_json,
+    )
+    raw_response, provider = call_llm(prompt)
+    logger.info(f"Cover letter for device={device_id} served by {provider}")
+
+    data = safe_parse_json(raw_response)
+
+    # Save cover letter to latest session
     if session:
         session.cover_letter_out = data.get("cover_letter", "")
         db.commit()
@@ -500,6 +515,9 @@ async def generate_docx(
     full_name: str            = Form(""),
     current_title: str        = Form(""),
     location: str             = Form(""),
+    email: str                = Form(""),
+    phone: str                = Form(""),
+    linkedin_url: str         = Form(""),
     education: str            = Form(""),
     skills: str               = Form("[]"),
     target_role: str          = Form(""),
@@ -521,6 +539,9 @@ async def generate_docx(
         full_name             = full_name,
         current_title         = current_title,
         location              = location,
+        email                 = email,
+        phone                 = phone,
+        linkedin_url          = linkedin_url,
         education             = education,
         skills                = skills_list,
         target_role           = target_role,

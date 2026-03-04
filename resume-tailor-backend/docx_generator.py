@@ -16,6 +16,9 @@ def generate_resume_docx(
     full_name: str = "",
     current_title: str = "",
     location: str = "",
+    email: str = "",
+    phone: str = "",
+    linkedin_url: str = "",
     education: str = "",
     skills: list[str] | None = None,
     target_role: str = "",
@@ -39,6 +42,9 @@ def generate_resume_docx(
         full_name=full_name or "Your Name",
         title=current_title or target_role,
         location=location,
+        email=email,
+        phone=phone,
+        linkedin_url=linkedin_url,
         education=education,
         skills=skills,
         target_role=target_role,
@@ -202,8 +208,8 @@ def _add_skills_grid(doc, skills, font_name="Calibri", accent=None):
 # ── Professional template ─────────────────────────────────────────────────────
 
 def _build_professional(
-    *, full_name, title, location, education, skills,
-    target_role, bullets, cover_letter,
+    *, full_name, title, location, email="", phone="", linkedin_url="",
+    education, skills, target_role, bullets, cover_letter,
     professional_summary="", experience=None,
 ):
     doc = Document()
@@ -220,16 +226,27 @@ def _build_professional(
     p.paragraph_format.space_before = Pt(0)
     _add_run(p, full_name.upper(), fn, 20, dark, bold=True)
 
-    # ── Contact line ──
+    # ── Contact line (title · location) ──
     parts = [x for x in [title, location] if x.strip()]
     if parts:
         p = doc.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_after = Pt(3)
+        p.paragraph_format.space_after = Pt(1)
         for i, part in enumerate(parts):
             if i > 0:
                 _add_run(p, "  ·  ", fn, 10, gray)
             _add_run(p, part, fn, 10, gray)
+
+    # ── Contact details line (email · phone · linkedin) ──
+    contact_details = [x for x in [email, phone, linkedin_url] if x.strip()]
+    if contact_details:
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.space_after = Pt(3)
+        for i, detail in enumerate(contact_details):
+            if i > 0:
+                _add_run(p, "  ·  ", fn, 9, gray)
+            _add_run(p, detail, fn, 9, gray)
 
     # ── Divider ──
     p = doc.add_paragraph()
@@ -308,8 +325,8 @@ def _build_professional(
 # ── Modern template ───────────────────────────────────────────────────────────
 
 def _build_modern(
-    *, full_name, title, location, education, skills,
-    target_role, bullets, cover_letter,
+    *, full_name, title, location, email="", phone="", linkedin_url="",
+    education, skills, target_role, bullets, cover_letter,
     professional_summary="", experience=None,
 ):
     doc = Document()
@@ -321,7 +338,6 @@ def _build_modern(
     light_gray = RGBColor(0x95, 0xA5, 0xA6)
 
     # ── Header block with accent color bar ──
-    # Use a table to create a colored header section
     header_table = doc.add_table(rows=1, cols=1)
     header_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = header_table.cell(0, 0)
@@ -335,16 +351,31 @@ def _build_modern(
     p.paragraph_format.space_after = Pt(2)
     _add_run(p, full_name, fn, 22, RGBColor(0xFF, 0xFF, 0xFF), bold=True)
 
-    # Subtitle in header
+    # Subtitle in header (title · location)
     parts = [x for x in [title, location] if x.strip()]
     if parts:
         p = cell.add_paragraph()
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        p.paragraph_format.space_after = Pt(12)
+        p.paragraph_format.space_after = Pt(2)
         for i, part in enumerate(parts):
             if i > 0:
                 _add_run(p, "  |  ", fn, 10, RGBColor(0xBD, 0xD5, 0xF7))
             _add_run(p, part, fn, 10, RGBColor(0xEC, 0xF0, 0xF1))
+
+    # Contact details in header (email · phone · linkedin)
+    contact_details = [x for x in [email, phone, linkedin_url] if x.strip()]
+    if contact_details:
+        p = cell.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        p.paragraph_format.space_after = Pt(12)
+        for i, detail in enumerate(contact_details):
+            if i > 0:
+                _add_run(p, "  |  ", fn, 9, RGBColor(0xBD, 0xD5, 0xF7))
+            _add_run(p, detail, fn, 9, RGBColor(0xEC, 0xF0, 0xF1))
+    else:
+        # Add bottom padding if no contact details
+        p_last = cell.paragraphs[-1]
+        p_last.paragraph_format.space_after = Pt(12)
 
     # Spacer after header
     p = doc.add_paragraph()
@@ -433,8 +464,8 @@ def _build_modern(
 # ── Minimal template ──────────────────────────────────────────────────────────
 
 def _build_minimal(
-    *, full_name, title, location, education, skills,
-    target_role, bullets, cover_letter,
+    *, full_name, title, location, email="", phone="", linkedin_url="",
+    education, skills, target_role, bullets, cover_letter,
     professional_summary="", experience=None,
 ):
     doc = Document()
@@ -449,12 +480,19 @@ def _build_minimal(
     p.paragraph_format.space_after = Pt(1)
     _add_run(p, full_name, fn, 18, black, bold=True)
 
-    # ── Contact line ──
+    # ── Contact line (title · location) ──
     parts = [x for x in [title, location] if x.strip()]
     if parts:
         p = doc.add_paragraph()
-        p.paragraph_format.space_after = Pt(6)
+        p.paragraph_format.space_after = Pt(1)
         _add_run(p, "  |  ".join(parts), fn, 9.5, mid_gray)
+
+    # ── Contact details (email · phone · linkedin) ──
+    contact_details = [x for x in [email, phone, linkedin_url] if x.strip()]
+    if contact_details:
+        p = doc.add_paragraph()
+        p.paragraph_format.space_after = Pt(6)
+        _add_run(p, "  |  ".join(contact_details), fn, 9, mid_gray)
 
     # Thin rule
     p = doc.add_paragraph()
